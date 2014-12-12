@@ -1,0 +1,46 @@
+﻿<telerik:RadWindow xmlns:sdk="http://schemas.microsoft.com/winfx/2006/xaml/presentation/sdk"  x:Class="Robotik_Silverlight.Hakkinda"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
+    mc:Ignorable="d"
+    d:DesignHeight="380" d:DesignWidth="340"
+    Height="380" Width="340"
+    Header="Hakkında">
+    <telerik:RadWindow.Resources>
+        <SolidColorBrush x:Key="GridHeaderForeground" Color="#FF767676" />
+
+        <Style TargetType="TextBlock">
+            <Setter Property="FontFamily" Value="Segoe UI Light" />
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+        </Style>
+
+
+    </telerik:RadWindow.Resources>
+
+    <Grid x:Name="LayoutRoot" >
+        <Grid.RowDefinitions>
+            <RowDefinition Height="40" />
+            <RowDefinition Height="80" />
+            <RowDefinition Height="140" />
+        </Grid.RowDefinitions>
+
+        <telerik:Label Content="Wavefront Planning Algorithm Simulator" Grid.Row="0" Foreground="#FF1CAFF3" FontSize="14" HorizontalAlignment="Center" FontWeight="Bold" FontFamily="Segoe UI" />
+        <TextBlock Margin="6,6,6,6" Text="Bu program COM417-Robotik dersi proje ödevi olarak yapılmıştır." Grid.Row="1" FontFamily="Portable User Interface" TextWrapping="Wrap" />
+        
+        <StackPanel Orientation="Vertical" Grid.Row="2" Margin="6,0,0,0" Width="190" HorizontalAlignment="Left">
+            <TextBlock Text="Katkıda bulunanlar:" FontSize="16" TextDecorations="Underline" Margin="0,0,0,6" />
+
+            <HyperlinkButton Content=" Kemal Duran" NavigateUri="http://kemalduran.website.org" FontSize="12" TargetName="_blank" />
+            <telerik:Label Content="Arafa Arslan" FontSize="12" />
+            <telerik:Label Content="Onur Kılıç" FontSize="12" />
+            <telerik:Label Content="ve Mehmet Serdar Güzel" Margin="0,4,0,0" FontSize="12" FontWeight="Bold" />
+        </StackPanel>
+        
+        
+        
+        
+    </Grid>
+</telerik:RadWindow>

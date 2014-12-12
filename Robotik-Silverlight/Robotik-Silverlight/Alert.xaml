@@ -1,0 +1,50 @@
+﻿<telerik:RadWindow xmlns:sdk="http://schemas.microsoft.com/winfx/2006/xaml/presentation/sdk"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
+    xmlns:Chromes="clr-namespace:Telerik.Windows.Controls.Chromes;assembly=Telerik.Windows.Controls"  
+                   x:Class="Robotik_Silverlight.Alert"
+    mc:Ignorable="d"
+    d:DesignHeight="150" d:DesignWidth="220"
+                   Width="220" Height="150"
+    HideMaximizeButton="True" HideMinimizeButton="True"
+                   ResizeMode="NoResize"
+    Header="Mesaj" >
+    <telerik:RadWindow.Resources>
+        <SolidColorBrush x:Key="GridHeaderForeground" Color="#FF767676" />
+
+        <Style TargetType="TextBlock">
+            <Setter Property="FontFamily" Value="Segoe UI Light" />
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+        </Style>
+
+
+    </telerik:RadWindow.Resources>
+
+    <Grid x:Name="LayoutRoot" >
+        <Grid.RowDefinitions>
+            <RowDefinition Height="7*" />
+            <RowDefinition Height="4*" />
+        </Grid.RowDefinitions>
+
+        <telerik:Label x:Name="mesaj" Grid.Row="0" Content="Ayarlar" HorizontalAlignment="Center" FontFamily="Segoe UI" />
+        <Grid Grid.Row="1" Background="WhiteSmoke" >
+            <Button Content="Tamam" Click="Button_Click" HorizontalAlignment="Center" VerticalAlignment="Center" Width="80" Height="26" Background="#FF4899DE" >
+                <Button.BorderBrush>
+                    <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                        <GradientStop Color="#FFD2E9FF" Offset="0"/>
+                        <GradientStop Color="#FF8399A9" Offset="0.375"/>
+                        <GradientStop Color="#FF5BABF3" Offset="0.375"/>
+                        <GradientStop Color="#FF87B2D3" Offset="1"/>
+                    </LinearGradientBrush>
+                </Button.BorderBrush>
+            </Button>
+        </Grid>
+       
+
+
+    </Grid>
+</telerik:RadWindow>
