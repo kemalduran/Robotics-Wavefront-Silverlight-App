@@ -27,7 +27,8 @@
     </navigation:Page.Resources>
     
     <Grid x:Name="LayoutRoot">
-        <Grid x:Name="anaGrid">
+        
+        <Grid x:Name="anaGrid" MouseMove="anaGrid_MouseMove">
             <Grid.Background>
                 <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
                     <GradientStop Color="#FFFDFAF1" Offset="0.003"/>
@@ -55,61 +56,21 @@
                 </telerik:RadMenuItem>
 
                 <telerik:RadMenuItem Header="Çıkış" Click="close_Click">
-
                 </telerik:RadMenuItem>
-
             </telerik:RadMenu>
-            <!--<Menu DockPanel.Dock="Top" Height="auto" IsMainMenu="True" Width="{Binding ElementName=anaGrid,Path=ActualWidth}" Padding="2" FontSize="16" HorizontalAlignment="Left" VerticalAlignment="Top" >
-                    <MenuItem Header="Seçenekler">
-                        <MenuItem x:Name="item1" Header="Tabloyu Hazırla" Click="item1_Click">
-                            <MenuItem.ToolTip>
-                                <ToolTip>
-                                    Tablonun boyutlarını belirleyin
-                                </ToolTip>
-                            </MenuItem.ToolTip>
-                            <MenuItem.Icon>
-                                <Image Source="/Assets/table-icon.png" />
-                            </MenuItem.Icon>
-                        </MenuItem>
-                        <MenuItem x:Name="item2" Header="Başlat" Visibility="Collapsed" Click="item2_Click">
-                            <MenuItem.ToolTip>
-                                <ToolTip>
-                                    Robotun hareketini başlatın
-                                </ToolTip>
-                            </MenuItem.ToolTip>
-                            <MenuItem.Icon>
-                                <Image Source="/Assets/play-icon.png" />
-                            </MenuItem.Icon>
-                        </MenuItem>
-                        <MenuItem x:Name="item3" Header="Sıfırla" Visibility="Visible" Click="item3_Click" >
-                            <MenuItem.ToolTip>
-                                <ToolTip>
-                                    Baştan başlatın
-                                </ToolTip>
-                            </MenuItem.ToolTip>
-                            <MenuItem.Icon>
-                                <Image Source="/Assets/ref-icon.png" />
-                            </MenuItem.Icon>
-                        </MenuItem>
-                    </MenuItem>
-                    <MenuItem Header="Ayarlar" Click="MenuItem_Click_1" />
-                    <MenuItem Header="Çıkış" Click="MenuItem_Click"></MenuItem>
-                </Menu>-->
-
 
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
                 <Grid x:Name="grid1" HorizontalAlignment="Center" ShowGridLines="True" Height="203" Margin="0,0,0,0" VerticalAlignment="Center" Width="374" Background="#FFF9F1DC">
-
+                    
                 </Grid>
-                <Grid x:Name="dragGrid" Visibility="Collapsed" VerticalAlignment="Top" Margin="18,0,12,0">
+                <Grid x:Name="dragGrid" Visibility="Collapsed" VerticalAlignment="Top" Margin="18,0,12,0" >
                     <Canvas Width="38" Height="82">
-                        <Image x:Name="robotImg" Width="34" Height="34" Source="Assets/android.png" MouseLeftButtonDown="robotImg_MouseDown" MouseMove="robotImg_MouseMove" MouseLeftButtonUp="robotImg_MouseUp" />
-                        <Image x:Name="flagImg" Canvas.Left="0" Canvas.Top="42" Width="34" Height="34" MouseLeftButtonDown="flagImg_MouseDown" MouseMove="flagImg_MouseMove" MouseLeftButtonUp="flagImg_MouseUp" Source="Assets/flag.png" />
+                        <Image x:Name="robotImg" Width="34" Height="34" Source="Assets/android.png" MouseLeftButtonDown="robotImg_MouseDown" MouseLeftButtonUp="robotImg_MouseUp" />
+                        <Image x:Name="flagImg" Canvas.Left="0" Canvas.Top="42" Width="34" Height="34" MouseLeftButtonDown="flagImg_MouseDown" MouseLeftButtonUp="flagImg_MouseUp" Source="Assets/flag.png" />
                     </Canvas>
                 </Grid>
             </StackPanel>
             <sdk:Label x:Name="label" Content="" HorizontalAlignment="Left" Margin="12,0,0,6" VerticalAlignment="Bottom" />
-
         </Grid>
     </Grid>
 </navigation:Page>

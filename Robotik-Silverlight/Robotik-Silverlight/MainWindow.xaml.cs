@@ -1,24 +1,21 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Animation;
-using System.Windows.Shapes;
 using System.Windows.Navigation;
 using Robotik_Proje.App_Codes;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
+using Robotik_Silverlight.App_Codes;
+using Robotik_Silverlight.App_Controls;
 
 namespace Robotik_Silverlight
 {
     public partial class MainWindow : Page
     {
         public static Tablo tablo;
+        public static bool isAnimBegin = false;
         public Image iRobot;
         public MainWindow()
         {
@@ -26,8 +23,9 @@ namespace Robotik_Silverlight
             this.Loaded += MainWindow_Loaded;
             this.Unloaded += MainWindow_Unloaded;
             initTable();
-        }
 
+        }
+        
         void MainWindow_Unloaded(object sender, RoutedEventArgs e)
         {
             hakk.Close();
@@ -36,7 +34,8 @@ namespace Robotik_Silverlight
 
         void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            
+            putPacMans();
+            beginPacManAnimation();
         }
 
         // Executes when the user navigates to this page.
@@ -44,6 +43,240 @@ namespace Robotik_Silverlight
         {
             
         }
+        Pacman pac1, pac2, pac3;
+        void putPacMans()
+        {
+            pac1 = new Pacman(3, 3, @"../../Assets/pac1-sag.png");
+            pac2 = new Pacman(9, 3, @"../../Assets/pac2-sol.png");
+            pac3 = new Pacman(2, 14, @"../../Assets/pac3-sol.png");
+
+            pac1.setBolgesi(tablo.bolgeler[3, 3], tablo.bolgeler[3, 4], tablo.bolgeler[3, 5],
+                tablo.bolgeler[3, 6], tablo.bolgeler[3, 7], tablo.bolgeler[3, 8], tablo.bolgeler[3, 9]);
+
+            pac2.setBolgesi(tablo.bolgeler[9, 3], tablo.bolgeler[9, 4], tablo.bolgeler[9, 5],
+                tablo.bolgeler[9, 6], tablo.bolgeler[9, 7], tablo.bolgeler[9, 8], tablo.bolgeler[9, 9]);
+
+            pac3.setBolgesi(tablo.bolgeler[2, 14], tablo.bolgeler[3, 14], tablo.bolgeler[4, 14],
+                tablo.bolgeler[5, 14], tablo.bolgeler[6, 14], tablo.bolgeler[7, 14], tablo.bolgeler[8, 14], 
+                tablo.bolgeler[9, 14], tablo.bolgeler[10, 14]);
+
+            pac1.Point1 = tablo.bolgeler[3, 3];
+            pac1.Point2 = tablo.bolgeler[3, 9];
+
+            pac2.Point1 = tablo.bolgeler[9, 3];
+            pac2.Point2 = tablo.bolgeler[9, 9];
+
+            pac3.Point1 = tablo.bolgeler[2, 14];
+            pac3.Point2 = tablo.bolgeler[10, 14];
+
+            putPacMan(pac1, pac1.Point1);
+            putPacMan(pac2, pac2.Point2);
+            putPacMan(pac3, pac3.Point1);
+
+            pac1.LeftRight = true;
+            pac2.LeftRight = true;
+            pac3.UpDown = true;
+            pac1.CurrentDirection = Animasyon.DIRECTION.Right;
+            pac2.CurrentDirection = Animasyon.DIRECTION.Left;
+            pac3.CurrentDirection = Animasyon.DIRECTION.Down;
+
+            pac1.current = pac1.Point1;
+            pac2.current = pac2.Point2;
+            pac3.current = pac3.Point1;
+
+        }
+        void putPacMan(Pacman p, Bolge bas)
+        {
+            grid1.Children.Add(p.image);
+            Grid.SetRow(p.image, bas.i);
+            Grid.SetColumn(p.image, bas.j);
+        }
+        DispatcherTimer dt_pac;
+        void beginPacManAnimation()
+        {
+            dt_pac = new DispatcherTimer();
+            dt_pac.Interval = TimeSpan.FromMilliseconds(Settings.HIZ_PAC);
+            dt_pac.Tick += delegate
+            {
+                Bolge next1 = findNextPac(pac1);
+                if (next1 != null)
+                {
+                    make0AllPac(pac1);
+                    pac1.next = next1;
+                    pac1.current.isPac = true;
+                    pac1.next.isPac = true;
+                    if (next1 != pac1.Point1 && next1 != pac1.Point2)
+                    {
+                        Bolge next_next = findNextNextPac(pac1);
+                        next_next.isPac = true;
+                    }
+
+                    animatePac(pac1);
+                }
+                Bolge next2 = findNextPac(pac2);
+                if (next2 != null)
+                {
+                    make0AllPac(pac2);
+                    pac2.next = next2;
+                    pac2.current.isPac = true;
+                    pac2.next.isPac = true;
+                    if (next2 != pac2.Point1 && next2 != pac2.Point2)
+                    {
+                        Bolge next_next = findNextNextPac(pac2);
+                        next_next.isPac = true;
+                    }
+                        animatePac(pac2);
+                }
+                Bolge next3 = findNextPac(pac3);
+                if (next3 != null)
+                {
+                    make0AllPac(pac3);
+                    pac3.next = next3;
+                    pac3.current.isPac = true;
+                    pac3.next.isPac = true;
+                    if (next3 != pac3.Point1 && next3 != pac3.Point2)
+                    {
+                        Bolge next_next = findNextNextPac(pac3);
+                        next_next.isPac = true;
+                    }
+                    animatePac(pac3);
+                }
+            };
+            dt_pac.Start();
+        }
+        void make0AllPac(Pacman p)
+        {
+            foreach (var bb in p.bolgesi)
+            {
+                bb.isPac = false;
+            }
+        }
+        void animatePac(Pacman pac)
+        {
+            Animasyon.DIRECTION dir = pac.CurrentDirection;
+            Animasyon anim = new Animasyon();
+            anim.sb.Completed += delegate
+            {
+                anim.sb.Stop();
+                anim.sb = null;
+                {
+                    Grid.SetRow(pac.image, pac.next.i);
+                    Grid.SetColumn(pac.image, pac.next.j);
+                    pac.current = pac.next;
+                }
+            };
+            anim.animate(pac.image, dir, Settings.HIZ_PAC);
+
+        }
+        Bolge findNextNextPac(Pacman p)
+        {
+            if (p.LeftRight)
+            {
+                if (p.CurrentDirection == Animasyon.DIRECTION.Right)
+                {
+                    if (p.current.Equals(p.Point2))
+                    { 
+                        return p.current.komsular[3].komsular[3]; // soldaki komşu
+                    }
+                    return p.current.komsular[0].komsular[0]; // sağdaki komşu
+                }
+                else if (p.CurrentDirection == Animasyon.DIRECTION.Left)
+                {
+                    if (p.current.Equals(p.Point1))
+                    { 
+                        return p.current.komsular[0].komsular[0]; // sağdaki komşu
+                    }
+                    return p.current.komsular[3].komsular[3]; // soldaki komşu
+                }
+            }
+            if (p.UpDown)
+            {
+                if (p.CurrentDirection == Animasyon.DIRECTION.Down)
+                {
+                    if (p.current.Equals(p.Point2))
+                    { 
+                        return p.current.komsular[2].komsular[2]; // üstdaki komşu
+                    }
+                    return p.current.komsular[1].komsular[1]; // altdaki komşu
+                }
+                else if (p.CurrentDirection == Animasyon.DIRECTION.Up)
+                {
+                    if (p.current.Equals(p.Point1))
+                    { 
+                        return p.current.komsular[1].komsular[1]; // altdaki komşu
+                    }
+                    return p.current.komsular[2].komsular[2]; // üstdaki komşu
+                }
+            }
+            return null;
+        }
+        Bolge findNextPac(Pacman p)
+        {
+            if (p.LeftRight)
+            {
+                if (p.CurrentDirection == Animasyon.DIRECTION.Right)
+                {
+                    if (p.current.Equals(p.Point2))
+                    { // sola dön
+                        p.CurrentDirection = Animasyon.DIRECTION.Left;
+                        setPacImage(p);
+                        return p.current.komsular[3]; // soldaki komşu
+                    }
+                    return p.current.komsular[0]; // sağdaki komşu
+                }
+                else if (p.CurrentDirection == Animasyon.DIRECTION.Left)
+                {
+                    if (p.current.Equals(p.Point1))
+                    { // sağa dön
+                        p.CurrentDirection = Animasyon.DIRECTION.Right;
+                        setPacImage(p);
+                        return p.current.komsular[0]; // sağdaki komşu
+                    }
+                    return p.current.komsular[3]; // soldaki komşu
+                }
+            }
+            if (p.UpDown)
+            {
+                if (p.CurrentDirection == Animasyon.DIRECTION.Down)
+                {
+                    if (p.current.Equals(p.Point2))
+                    { // yukarı dön
+                        p.CurrentDirection = Animasyon.DIRECTION.Up;
+                        return p.current.komsular[2]; // üstdaki komşu
+                    }
+                    return p.current.komsular[1]; // altdaki komşu
+                }
+                else if (p.CurrentDirection == Animasyon.DIRECTION.Up)
+                {
+                    if (p.current.Equals(p.Point1))
+                    { // aşağı dön
+                        p.CurrentDirection = Animasyon.DIRECTION.Down;
+                        return p.current.komsular[1]; // altdaki komşu
+                    }
+                    return p.current.komsular[2]; // üstdaki komşu
+                }
+            }
+            return null;
+        }
+        void setPacImage(Pacman pac)
+        {
+            if (pac.Equals(pac1))
+            {
+                if(pac.CurrentDirection == Animasyon.DIRECTION.Left)
+                    pac.image.Source = new BitmapImage(new Uri(@"../../Assets/pac1-sol.png", UriKind.Relative));
+                else if (pac.CurrentDirection == Animasyon.DIRECTION.Right)
+                    pac.image.Source = new BitmapImage(new Uri(@"../../Assets/pac1-sag.png", UriKind.Relative));
+            }
+            else if (pac.Equals(pac2))
+            {
+                if (pac.CurrentDirection == Animasyon.DIRECTION.Left)
+                    pac.image.Source = new BitmapImage(new Uri(@"../../Assets/pac2-sol.png", UriKind.Relative));
+                else if (pac.CurrentDirection == Animasyon.DIRECTION.Right)
+                    pac.image.Source = new BitmapImage(new Uri(@"../../Assets/pac2-sag.png", UriKind.Relative));
+            }
+
+        }
+
         public void initTable()
         {
             tablo = new Tablo();
@@ -129,23 +362,16 @@ namespace Robotik_Silverlight
         double dropXRobot, dropYRobot;
         private void robotImg_MouseDown(object sender, MouseButtonEventArgs e)
         {
+            if (isAnimBegin)
+                return;
             isRobotDragging = true;
             xRobot = e.GetPosition(dragGrid).X;
             yRobot = e.GetPosition(dragGrid).Y;
             SetPositionRobot();
         }
-        private void robotImg_MouseMove(object sender, MouseEventArgs e)
-        {
-            if (isRobotDragging)
-            {
-                xRobot = e.GetPosition(dragGrid).X;
-                yRobot = e.GetPosition(dragGrid).Y;
-                SetPositionRobot();
-            }
-        }
-
         private void robotImg_MouseUp(object sender, MouseButtonEventArgs e)
         {
+
             xRobot = e.GetPosition(dragGrid).X;
             yRobot = e.GetPosition(dragGrid).Y;
             dropXRobot = e.GetPosition(grid1).X;
@@ -157,23 +383,34 @@ namespace Robotik_Silverlight
 
             if (cc >= 0 && rr >= 0 && cc < tablo.column && rr < tablo.row)
             {
+                if (!controlDropOnPac(tablo.bolgeler[rr, cc]))
+                    validDropRobot = false;
+                else
+                    validDropRobot = true;
+            }
+            else
+            {
+                // invalid
+                validDropRobot = false;
+            }
+
+            if (validDropRobot)
+            {
                 // valid
                 tablo.Start = tablo.bolgeler[rr, cc];
-                validDropRobot = true;
                 if (validDropFlag)
                 {
                     item2.Visibility = Visibility.Visible;
                 }
                 Canvas.SetLeft(robotImg, Settings.BolgeSIZE * (-tablo.column + cc) - 18);
                 Canvas.SetTop(robotImg, Settings.BolgeSIZE * rr);
-
             }
             else
             {
-                // invalid
-                validDropRobot = false;
-                item2.Visibility = Visibility.Collapsed;
+                Canvas.SetLeft(robotImg,  - 18);
+                Canvas.SetTop(robotImg, 0);
 
+                item2.Visibility = Visibility.Collapsed;
             }
 
         }
@@ -190,20 +427,12 @@ namespace Robotik_Silverlight
         double dropXFlag, dropYFlag;
         private void flagImg_MouseDown(object sender, MouseButtonEventArgs e)
         {
+            if (isAnimBegin)
+                return;
             isFlagDragging = true;
             xFlag = e.GetPosition(dragGrid).X;
             yFlag = e.GetPosition(dragGrid).Y;
             SetPositionFlag();
-        }
-
-        private void flagImg_MouseMove(object sender, MouseEventArgs e)
-        {
-            if (isFlagDragging)
-            {
-                xFlag = e.GetPosition(dragGrid).X;
-                yFlag = e.GetPosition(dragGrid).Y;
-                SetPositionFlag();
-            }
         }
 
         private void flagImg_MouseUp(object sender, MouseButtonEventArgs e)
@@ -219,9 +448,17 @@ namespace Robotik_Silverlight
 
             if (cc >= 0 && rr >= 0 && cc < tablo.column && rr < tablo.row)
             {
-                // valid
+                if (!controlDropOnPac(tablo.bolgeler[rr, cc]))
+                    validDropFlag = false;
+                else
+                    validDropFlag = true;
+            }
+            else{
+                validDropFlag = false;
+            }
+            if(validDropFlag){
+                 // valid
                 tablo.End = tablo.bolgeler[rr, cc];
-                validDropFlag = true;
                 if (validDropRobot)
                 {
                     item2.Visibility = Visibility.Visible; ;
@@ -229,10 +466,9 @@ namespace Robotik_Silverlight
                 Canvas.SetLeft(flagImg, Settings.BolgeSIZE * (-tablo.column + cc) - 18);
                 Canvas.SetTop(flagImg, Settings.BolgeSIZE * rr);
             }
-            else
-            {
-                // invalid
-                validDropFlag = false;
+            else{
+                Canvas.SetLeft(flagImg, -18);
+                Canvas.SetTop(flagImg, 42);
                 item2.Visibility = Visibility.Collapsed;
             }
         }
@@ -241,6 +477,26 @@ namespace Robotik_Silverlight
             Canvas.SetLeft(flagImg, xFlag - flagImg.Width / 2);
             Canvas.SetTop(flagImg, yFlag - flagImg.Height / 2);
         }
+        bool controlDropOnPac(Bolge bb)
+        {
+            foreach (var p1 in pac1.bolgesi)
+            {
+                if (p1.Equals(bb))
+                    return false;
+            }
+            foreach (var p1 in pac2.bolgesi)
+            {
+                if (p1.Equals(bb))
+                    return false;
+            }
+            foreach (var p1 in pac3.bolgesi)
+            {
+                if (p1.Equals(bb))
+                    return false;
+            }
+            return true;
+        }
+
 
         void putiRobot()
         {
@@ -261,7 +517,10 @@ namespace Robotik_Silverlight
             int s = gez.current.sayi;
             foreach (var item in gez.current.komsular)
             {
-                if (item.sayi < s && item.sayi != 0 && item.sayi != 1)
+                if (item.sayi == 2)
+                    return item;
+
+                if (item.sayi < s && item.sayi != 0 && item.sayi != 1 && !item.isPac)
                 {
                     return item;
                 }
@@ -270,6 +529,7 @@ namespace Robotik_Silverlight
         }
         void animateCurrentToNext(Gezinti gez)
         {
+            // numaralara bakarak bir sonraki yeri hesapla ve git
             Animasyon.DIRECTION dir = Animasyon.DIRECTION.Right;
             if (gez.next.i > gez.current.i) // alt satırda
             {
@@ -299,6 +559,11 @@ namespace Robotik_Silverlight
             Animasyon anim = new Animasyon();
             anim.sb.Completed += delegate
             {
+                line ll = new line(dir);
+                grid1.Children.Add(ll);
+                Grid.SetRow(ll, gez.current.i);
+                Grid.SetColumn(ll, gez.current.j);
+
                 anim.sb.Stop();
                 anim.sb = null;
                 {
@@ -307,68 +572,84 @@ namespace Robotik_Silverlight
                     gez.current = gez.next;
                     //   gez.next = null;                    
                 }
+
             };
-            anim.animate(iRobot, dir);
+            anim.animate(iRobot, dir, Settings.HIZ);
         }
         DispatcherTimer dt;
+        Gezinti gez;
         void hareketeBasla()
         {
-            Gezinti gez = new Gezinti();
-            gez.start = tablo.Start;
-            gez.end = tablo.End;
-            gez.current = tablo.Start;
-
             dt = new DispatcherTimer();
             dt.Interval = TimeSpan.FromMilliseconds(Settings.HIZ );
             dt.Tick += delegate
             {
+
                 /* iterate */
                 Bolge next = findNext(gez);
-                if (next != null)
+                if (next.sayi == 2)
                 {
+                    dt.Stop();
                     gez.next = next;
+
                     // animate. current -> next
                     animateCurrentToNext(gez);
+                    {
+                        DispatcherTimer bit = new DispatcherTimer();
+                        bit.Interval = TimeSpan.FromMilliseconds(Settings.HIZ);
+                        bit.Tick += delegate
+                        {
+                            bit.Stop();
+                            Alert a = new Alert("Robot hedefe ulaştı.", "Tebrikler");
+                            a.WindowStartupLocation = Telerik.Windows.Controls.WindowStartupLocation.CenterOwner;
+                            a.Show();
+                        };
+                        bit.Start();
+                    }
                 }
-                else
+                else if (next != null)
                 {
+                    gez.next = next;
+
+                    // animate. current -> next
+                    animateCurrentToNext(gez);
+
+                    // numaraları tekrar ata
+                    BFS_Algorithm bfs = new BFS_Algorithm();
+                    foreach (var bb in tablo.bolgeler)
+                    {
+                        if (bb.sayi != 1 && bb.sayi != 2)
+                        {
+                            bb.sayi = 0;
+                        }
+                    }
+                    bfs.BFSSearch(gez);
                     
-                    dt.Stop();
-                    Alert a = new Alert("Robot hedefe ulaştı.", "Tebrikler");
-                    a.WindowStartupLocation = Telerik.Windows.Controls.WindowStartupLocation.CenterOwner;
-                    a.Show();
+                  //  sayilariYazdir();
+                }
+                else if(next == null)
+                {
+                    // bekle ve geç
+
+
                 }
             };
             dt.Start();
         }
-        void sayilariYazdir()
-        {
-            foreach (var item in tablo.bolgeler)
-            {
-                if (item.sayi != 1)
-                {
-                    Label lbl = new Label();
-                    lbl.Content = item.sayi;
-                    lbl.FontSize = 9;
-                    lbl.Width = lbl.Height = 11;
-                    lbl.Margin = new Thickness(2, 2, 0, 0);
-                    lbl.Background = new SolidColorBrush(Colors.Yellow);
-                    lbl.HorizontalAlignment = HorizontalAlignment.Left;
-                    lbl.VerticalAlignment = VerticalAlignment.Top;
-                    lbl.Padding = new Thickness(0);
-                    grid1.Children.Add(lbl);
-                    Grid.SetRow(lbl, item.i);
-                    Grid.SetColumn(lbl, item.j);
-                }
-            }
-        }
+        
         private void item2_Click(object sender, Telerik.Windows.RadRoutedEventArgs e)
         {
+            isAnimBegin = true;
             item2.Visibility = Visibility.Collapsed;
             tablo.End.sayi = 2;
 
+            gez = new Gezinti();
+            gez.start = tablo.Start;
+            gez.end = tablo.End;
+            gez.current = tablo.Start;
+
             BFS_Algorithm bfs = new BFS_Algorithm();
-            if (bfs.BFSSearch(tablo.End) == null)
+            if (bfs.BFSSearch(gez) == null) // sayılar burada atandı
             {
                 Alert a = new Alert("Robot hedefe ulaşamaz!!!");
                 a.WindowStartupLocation = Telerik.Windows.Controls.WindowStartupLocation.CenterOwner;
@@ -382,8 +663,11 @@ namespace Robotik_Silverlight
                 hareketeBasla();
             }
         }
+        // sıfırla
         private void item3_Click(object sender, Telerik.Windows.RadRoutedEventArgs e)
         {
+            isAnimBegin = false;
+            gez = null;
             if (iRobot != null)
                 iRobot.Visibility = Visibility.Collapsed;
             grid1.Children.Clear();
@@ -407,9 +691,37 @@ namespace Robotik_Silverlight
             {
                 dt.Stop();
             }
+            dt_pac.Stop();
+            dt_pac = null;
             initTable();
+            pac1 = null;
+            pac2 = null;
+            pac3 = null;
+            putPacMans();
+            beginPacManAnimation();
         }
-
+        void sayilariYazdir()
+        {
+            foreach (var item in tablo.bolgeler)
+            {
+                if (item.sayi != 1)
+                {
+                    item.label = new Label();
+                    item.label.Content = item.sayi;
+                    item.label.FontSize = 9;
+                    item.label.Width = item.label.Height = 11;
+                    item.label.Margin = new Thickness(2, 2, 0, 0);
+                    item.label.Background = new SolidColorBrush(Colors.Yellow);
+                    item.label.HorizontalAlignment = HorizontalAlignment.Left;
+                    item.label.VerticalAlignment = VerticalAlignment.Top;
+                    item.label.Padding = new Thickness(0);
+                    if(!grid1.Children.Contains(item.label))
+                        grid1.Children.Add(item.label);
+                    Grid.SetRow(item.label, item.i);
+                    Grid.SetColumn(item.label, item.j);
+                }
+            }
+        }
 
         private void close_Click(object sender, Telerik.Windows.RadRoutedEventArgs e)
         {
@@ -436,10 +748,29 @@ namespace Robotik_Silverlight
         void ayar_Closed(object sender, Telerik.Windows.Controls.WindowClosedEventArgs e)
         {
             if (dt != null)
-                    dt.Interval = TimeSpan.FromMilliseconds(Settings.HIZ + 50);
+                    dt.Interval = TimeSpan.FromMilliseconds(Settings.HIZ);
+            if (dt_pac != null)
+            {
+                dt_pac.Interval = TimeSpan.FromMilliseconds(Settings.HIZ_PAC);
+            }
         }
 
-
-
+        private void anaGrid_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (isRobotDragging)
+            {
+                Point pp = e.GetPosition(dragGrid);
+                xRobot = pp.X;
+                yRobot = pp.Y;
+                SetPositionRobot();
+            }
+            else if (isFlagDragging)
+            {
+                Point pp = e.GetPosition(dragGrid);
+                xFlag = pp.X;
+                yFlag = pp.Y;
+                SetPositionFlag();
+            }
+        }
     }
 }

@@ -6,7 +6,8 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
     mc:Ignorable="d"
-    d:DesignHeight="280" d:DesignWidth="340"
+    d:DesignHeight="300" d:DesignWidth="340"
+                   Height="300" Width="340"
     Header="Ayarlar" >
     <telerik:RadWindow.Resources>
         <SolidColorBrush x:Key="GridHeaderForeground" Color="#FF767676" />
@@ -28,15 +29,25 @@
         
         <telerik:Label Content="Ayarlar" Grid.Row="0" Foreground="#FF1CAFF3" FontSize="14" HorizontalAlignment="Center" FontWeight="Bold" FontFamily="Segoe UI" />
 
-        <Grid Grid.Row="1" Width="310" HorizontalAlignment="Center">
-            <sdk:Label Content="Animasyon Hızı" FontSize="14" HorizontalAlignment="Left" Margin="21,27,0,0" VerticalAlignment="Top"/>
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                <sdk:Label Content="Yavaş" FontSize="12"  />
-                <Slider x:Name="slider" Value="5" Width="120"/>
-                <sdk:Label Content="Hızlı" FontSize="12" />
-                
-            </StackPanel>
+        <Grid Grid.Row="1" Width="310" HorizontalAlignment="Center" Margin="5,0,5,-28">
+            <StackPanel Orientation="Vertical">
+                <sdk:Label Content="Robot animasyon hızı" FontSize="14" HorizontalAlignment="Left" Margin="21,20,0,0" VerticalAlignment="Top"/>
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Top" HorizontalAlignment="Center" Height="40">
+                    <sdk:Label Content="Yavaş" FontSize="12"  />
+                    <Slider x:Name="slider" Value="5" Width="120"/>
+                    <sdk:Label Content="Hızlı" FontSize="12" />
+                </StackPanel>
 
+                <sdk:Label Content="Engel animasyon hızı" FontSize="14" HorizontalAlignment="Left" Margin="21,20,0,0" VerticalAlignment="Top"/>
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Top" HorizontalAlignment="Center" Height="40">
+                    <sdk:Label Content="Yavaş" FontSize="12"  />
+                    <Slider x:Name="slider2" Value="5" Width="120"/>
+                    <sdk:Label Content="Hızlı" FontSize="12" />
+                </StackPanel>
+
+            </StackPanel>
+            
+            
             <Button Content="Kaydet" Click="Button_Click" HorizontalAlignment="Right" Margin="0,0,12,12" VerticalAlignment="Bottom" Width="80" Height="26" Background="#FF4899DE" >
                 <Button.BorderBrush>
                     <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">

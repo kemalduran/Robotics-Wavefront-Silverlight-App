@@ -1,23 +1,18 @@
-﻿using Robotik_Silverlight;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace Robotik_Proje.App_Codes
 {
     public class BFS_Algorithm
     {
-        public Bolge BFSSearch(Bolge root)
+        public Bolge BFSSearch(Gezinti gez)
         {
             Queue<Bolge> Q = new Queue<Bolge>();
-            Q.Enqueue(root);
+            Q.Enqueue(gez.end);
 
             while (Q.Count > 0)
             {
                 Bolge p = Q.Dequeue();
-                if (p.Equals(MainWindow.tablo.Start))
+                if (p.Equals(gez.current))
                     return p;
                 foreach (Bolge kk in p.komsular)
                 {

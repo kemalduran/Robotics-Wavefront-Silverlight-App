@@ -94,10 +94,14 @@
     <Compile Include="App_Codes\BFS_Algorithm.cs" />
     <Compile Include="App_Codes\Bolge.cs" />
     <Compile Include="App_Codes\Gezinti.cs" />
+    <Compile Include="App_Codes\Pacman.cs" />
     <Compile Include="App_Codes\Settings.cs" />
     <Compile Include="App_Codes\Tablo.cs" />
     <Compile Include="App_Controls\border.xaml.cs">
       <DependentUpon>border.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="App_Controls\line.xaml.cs">
+      <DependentUpon>line.xaml</DependentUpon>
     </Compile>
     <Compile Include="Ayarlar.xaml.cs">
       <DependentUpon>Ayarlar.xaml</DependentUpon>
@@ -122,6 +126,10 @@
     <Page Include="App_Controls\border.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="App_Controls\line.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Ayarlar.xaml">
       <SubType>Designer</SubType>
@@ -152,6 +160,17 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Assets\background.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Assets\pac1-sag.png" />
+    <Resource Include="Assets\pac1-sol.png" />
+    <Resource Include="Assets\pac2-sag.png" />
+    <Resource Include="Assets\pac2-sol.png" />
+    <Resource Include="Assets\pac3-sag.png" />
+    <Resource Include="Assets\pac3-sol.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Assets\empty2.png" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Silverlight\$(SilverlightVersion)\Microsoft.Silverlight.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
